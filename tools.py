@@ -55,11 +55,25 @@ def getMessages(client, c, m):
         print(f"Error: {e.response['error']}")
         return None, False
     
-def createTranscript(messages):
+def createTranscript(client, messages):
     transcript = ''
     for message in messages: 
         if message['type'] == 'message':
-            line = message['user']+ " " + message['text'] + "\n"
+            line = getUsername(client, message['user'])+ " " + message['text'] + "\n"
             transcript += line
             
     return transcript
+
+def getUsername(client, user_id):
+    try:
+        response = client.users_info(user=user_id)
+
+        if response["ok"]:
+            user_info = response["user"]
+            user_name = user_info["real_name"]
+            
+            return user_name
+
+    except Exception as e:
+        print(f"Error getting user information for user ID {user_id}: {e.response['error']}")
+        return None

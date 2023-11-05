@@ -15,11 +15,11 @@ def app():
         messages, ok = tools.getMessages(client, channel, max)
         
         if ok:
-            transcript = tools.createTranscript(messages)
+            transcript = tools.createTranscript(client, messages)
             
             response = openai.Completion.create(
                 engine="text-davinci-003",
-                prompt=f"Summarize\n:{transcript}",
+                prompt=f"Summarize:\n:{transcript}",
                 max_tokens=1024,
                 temperature=0.5,
             )
