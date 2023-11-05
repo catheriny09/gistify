@@ -1,33 +1,40 @@
 import slack_sdk as slack
 import openai
-
-TOKEN = "xoxb-6159036217889-6146424057874-RZInAgnUziqX1087QhVnoNWJ"
-API_KEY = "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"
+import json
 
 def app():
-    client = slack.WebClient(token=TOKEN)
-    openai.api_key = API_KEY
+    slack_token, api_key = fetchKeys()
     
-    NAME = input("Enter channel to summarize: ")
-    MAX_MESSAGES = input("Max messages: ")
-    CHANNEL, ok = validateChannel(client, NAME)
+    client = slack.WebClient(token=slack_token)
+    openai.api_key = api_key
+    
+    name = input("Enter channel to summarize: ")
+    max = input("Max messages: ")
+    channel, ok = validateChannel(client, name)
 
     if ok:
-        messages, ok = getMessages(client, CHANNEL, MAX_MESSAGES)
+        messages, ok = getMessages(client, channel, max)
         
         if ok:
             transcript = createTranscript(messages)
-            p = "Please summarize this conversation: " + transcript
             
-            response = openai.ChatCompletion.create(
-                engine="davinci",
-                prompt=p,
-                max_tokens=100
+            response = openai.Completion.create(
+                engine="text-davinci-003",
+                prompt=f"Summarize\n:{transcript}",
+                max_tokens=1024,
+                temperature=0.5,
             )
             
         summary = response.choices[0].text
         print(summary)
         
+def fetchKeys():
+    with open("config.json", "r") as config_file:
+        config = json.load(config_file)
+        token=config["slack_token"]
+        api_key=config["openai_api_key"]
+        
+    return token, api_key
         
 def validateChannel(client, name):
     try:
@@ -74,7 +81,7 @@ def createTranscript(messages):
     transcript = ''
     for message in messages: 
         if message['type'] == 'message':
-            line = message['user'] + ': ' + message['text'] + '\n'
+            line = message['user']+ " " + message['text'] + "\n"
             transcript += line
             
     return transcript
