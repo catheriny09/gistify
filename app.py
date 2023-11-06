@@ -3,7 +3,7 @@ import openai
 import tools
 
 def app():
-    slack_token, api_key = tools.fetchKeys()
+    slack_token, api_key= tools.fetchKeys()
     
     client = slack.WebClient(token=slack_token)
     openai.api_key = api_key

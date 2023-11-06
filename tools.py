@@ -10,7 +10,7 @@ def fetchKeys():
 
 def getInputs():
     name = input("Enter channel to summarize: ")
-    max = input("Max messages: ")
+    max = int(input("Messages to query: "))
     
     return name, max
         
@@ -26,25 +26,27 @@ def validateChannel(client, name):
                     channel_id = channel["id"]
                     return channel_id, True
             
+            print("Error: Channel not found")
             return None, False
             
         else:
             print(f"Error: {response['error']}")
+            return None, False
 
     except Exception as e:
         print(f"Error: {e.response['error']}")
-        
-    return channels
+        return None, False
 
 def getMessages(client, c, m):
     try:
         response = client.conversations_history(
             channel=c,
-            limit=m,
+            limit=m
         )
 
         if response["ok"]:
             messages = response["messages"]
+            
             return messages, True
                 
         else:
