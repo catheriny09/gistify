@@ -11,4 +11,4 @@ python app.py
 Inputs -- channel name 
        -- number of messages
 
-### Note -- config.json file must be updated with valid keys for use
+Note -- config.json file must be updated with valid keys for use
