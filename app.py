@@ -3,6 +3,9 @@ import openai
 import tools
 
 def app():
+    """ Runs the gistify application to summarize slack
+        message history
+    """
     slack_token, api_key= tools.fetchKeys()
     
     client = slack.WebClient(token=slack_token)
