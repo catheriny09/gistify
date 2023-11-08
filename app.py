@@ -30,6 +30,8 @@ class App_Frame(wx.Frame):
         self.Show()
         
     def on_press(self, event):
+        out = 'Response unavailable'
+        
         self.client = slack.WebClient(token=self.slack_token)
         openai.api_key = self.api_key
         
@@ -45,13 +47,14 @@ class App_Frame(wx.Frame):
                 
                 response = openai.Completion.create(
                     engine="text-davinci-003",
-                    prompt=f"Summarize.:\n:{transcript}",
+                    prompt=f"Summarize.:{transcript}",
                     max_tokens=1024,
                     temperature=0.5,
                 )
                 
-            summary = response.choices[0].text
-            out = re.sub("(.{45})", "\\1\n", summary, 0, re.DOTALL)
+                summary = response.choices[0].text
+                out = re.sub("(.{42})", "\\1\n", summary, 0, re.DOTALL)
+                
             self.w_text_ctrl.SetLabelText(out)
 
 def app():
